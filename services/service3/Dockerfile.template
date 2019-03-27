@@ -1,0 +1,11 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3.5-stretch-build
+
+WORKDIR /usr/app/src
+
+COPY subservice2 subservice2
+
+# The *.o are part of the build context (can be seen in the ouput of 'ls')
+# And 'make' completes with message: `make: Nothing to be done for 'all'.` (because the output file are already there)
+RUN cd subservice2 && ls -lah && make
+
+CMD ["echo", "Finished"]
