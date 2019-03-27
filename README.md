@@ -1,5 +1,11 @@
 ### Example project to replicate the issue with ignored folder when building.
 
+#### Folder structure:
+  - `services/service1` - has a git submodule which has `.gitignore` file
+  - `services/service2` - has a normal sub-folder which has `.gitignore` file
+  - `services/service3` - has a normal sub-folder which has `.dockerignore` file
+
+
 When using `balena push` to deploy the code, some services fail to build due to the fact
 that they contain a subservice folder which itself contains a `.gitignore` file to exclude the build outputs of `make`.
 Because the name of the output file matches the name of the sub-folder, the sub-folder gets excluded from the build context.
