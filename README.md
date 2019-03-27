@@ -7,21 +7,16 @@ Because the name of the output file matches the name of the sub-folder, the sub-
 If a version before 8.0.0 is used, the build succeeds.
 
 
-If instead of `balena push` we use `git push`, the build fails for service1 (which has a submodule),
-with the following error: `make: *** No targets specified and no makefile found. Stop.`. This is due the
-fact the submodules are not initialized on remote servers, which is an expected behaviour.
-The image for service2 (which has no submodule, but only a `.gitignore` in a sub-folder) is built successfully.
-
-
 ### Run the example
 
 Steps:
   1. Clone the repo and change the directory
   2. Run `git submodule init && git submodule update`
-  3. Run `balena push <app_name>`
+  3. cd into each subservice folder, and run `make`
+  4. Run `balena push <app_name>` or `git add . && git commit -m "test" && git push balena master`
 
 
-### Expected results (with later versions of the CLI):
+#### Expected results (with later versions of the CLI):
   - The files `services/service1/subservice1/*.o`, `services/service1/subservice1/subservice1` should be excluded
     for `test_submodule` docker service
   - The files `services/service2/subservice2/*.o`, `services/service2/subservice2/subservice2` should be excluded
@@ -34,10 +29,34 @@ Steps:
   - The `.gitignore` files are not having effect cross-services
 
 
-### Actual results (with later versions of the CLI):
+#### Actual results (with later versions of the CLI):
   - The folder `services/service1/subservice1` is excluded for `test_submodule` docker service (bad)
   - The folder `services/service2/subservice2` is excluded for `test_service2` docker service (bad)
   - The files `services/service3/subservice2/*.o` are included in the built context for `test_service3`
-    docker service (bad)
+    docker service, and `make` prints "make: Nothing to be done for 'all'." (bad)
 
   - The `.gitignore` files are not having effect cross-services (good)
+
+
+### Using `git push`
+
+If instead of `balena push` we use `git push`, the build fails for `test_submodule` service,
+which has a submodule, with the following error: `make: *** No targets specified and no makefile found. Stop.`.
+This is due the fact the submodules are not initialized on remote servers, which is an expected behaviour.
+The image for `test_service2` service , which has no submodule, but only a `.gitignore` in a sub-folder,
+is built successfully.
+The image for `test_service3` service , which has just a `.dockerignore` gets build, the output files `*.o`
+are not sent with the build.
+
+#### Expected results (with `git push`):
+  - The build fails for `test_submodule` service with the following error: `make: *** No targets specified and no makefile found. Stop.`.
+  - Build of `test_service2` succeeds
+  - The `services/service3/subservice2/.dockerignore` should exclude the `*.o` file from build context
+    for `test_service3` docker service (maybe?)
+
+
+#### Actual results (with `git push`):
+  - The build fails for `test_submodule` service with the following error: `make: *** No targets specified and no makefile found. Stop.`.
+  - Build of `test_service2` succeeds
+  - The files `services/service3/subservice2/*.o` are included in the built context for `test_service3`
+    docker service, and `make` prints "make: Nothing to be done for 'all'." (bad)
