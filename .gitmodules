@@ -1,0 +1,3 @@
+[submodule "services/service1/subservice1"]
+	path = services/service1/subservice1
+	url = https://github.com/Krismix1/dummy_submodule.git

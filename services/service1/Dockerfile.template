@@ -1,0 +1,13 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-python:3.5-stretch-build
+
+WORKDIR /usr/app/src
+
+# Fails error message: 'lstat subservice1: no such file or directory'
+COPY subservice1 subservice1
+
+# if instead we use 'COPY . .'
+# then it will fail at 'cd subservice1' with message: '/bin/sh: 1: cd: can't cd to subservice1'
+
+RUN ls -lah && cd subservice1 && make
+
+CMD ["echo", "Finished"]

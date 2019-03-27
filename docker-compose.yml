@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  test_submodule:
+    build: ./services/service1/
+    restart: always
+
+  test_service2:
+    build: ./services/service2/
+    restart: always
