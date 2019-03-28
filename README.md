@@ -51,8 +51,9 @@ which has a submodule, with the following error: `make: *** No targets specified
 This is due the fact the submodules are not initialized on remote servers, which is an expected behaviour.
 The image for `test_service2` service , which has no submodule, but only a `.gitignore` in a sub-folder,
 is built successfully.
-The image for `test_service3` service , which has just a `.dockerignore` gets build, the output files `*.o`
-are not sent with the build.
+The image for `test_service3` service , which has just a `.dockerignore` gets build, but the behaviour depends on
+whether the output files `*.o` (and other output files) have been committed or not. If those files are committed then `make` exits with "make: Nothing to be done for 'all'.".
+If those files are not committed, then `make` works as usual - builds everything from scratch.
 
 #### Expected results (with `git push`):
   - The build fails for `test_submodule` service with the following error: `make: *** No targets specified and no makefile found. Stop.`.
